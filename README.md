@@ -37,11 +37,6 @@ And next:
 
 * [Visual Studio Code](https://code.visualstudio.com/) - Used for code editting.
 
-## Authors
-
-* **David Kastle** - [Davidsksilva](https://github.com/Davidsksilva)
-* **Leoberto Soares** - [leossoaress](https://github.com/leossoaress)
-
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
