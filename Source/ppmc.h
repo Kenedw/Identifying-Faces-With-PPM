@@ -1,6 +1,7 @@
 #ifndef PPMC_PPMC_H_
 #define PPMC_PPMC_H_
 
+#include <iostream>
 #include <fstream>
 #include <sstream>
 #include <iomanip>
@@ -50,6 +51,8 @@ private:
     int GetContextDepth(Node *node);
 
     void SaveNode(Node* node, std::fstream *file);
+
+    void FreeTree(Node* node);
 
 public:
 

@@ -44,7 +44,8 @@ void PPMC::Compress()
     duration = (std::clock() - start) / (double) CLOCKS_PER_SEC;
     std::cout << std::setprecision(3) << std::fixed;
     std::clog << "\nCompression duration time: " << duration << " segundos" << std::endl;
-    PrintTree(root,0);
+    // PrintTree(root,0);
+    FreeTree(root);
 }
 
 void PPMC::Encode(unsigned char symbol_)
@@ -219,24 +220,11 @@ void PPMC::Progress()
 
 void PPMC::SaveNode(Node* node, std::fstream *file)
 {
-    file->write(/*CALMA CARAI*/);
+    // file->write(/*CALMA CARAI*/);
 }
 
 void PPMC::SaveTree(Node* node,std::fstream *file)
 {
-    // switch (node->GetType()) {
-    //     case ROOT:
-    //     printf("root\n");
-    //     break;
-        
-    //     case ESC: 
-    //     printf("esc(%d)\n", node->GetCount());
-    //     break;
-        
-    //     default:
-    //     printf("%c(%d)\n", node->GetSymbol(), node->GetCount());
-    //     break;
-    // }
     SaveNode(node,file);
 
     if(node->GetChild() != nullptr) {
@@ -248,4 +236,18 @@ void PPMC::SaveTree(Node* node,std::fstream *file)
         if(node->GetSibiling() != nullptr) 
             SaveTree(node->GetSibiling(),file);    
     }
+}
+
+void PPMC::FreeTree(Node* node)
+{
+    if(node->GetChild() != nullptr) {
+        FreeTree(node->GetChild());
+
+        if(node->GetEsc() != nullptr) 
+            FreeTree(node->GetEsc());
+        
+        if(node->GetSibiling() != nullptr) 
+            FreeTree(node->GetSibiling());    
+    }
+    node->freeNode(node);
 }

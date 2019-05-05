@@ -142,3 +142,8 @@ unsigned int Node::GetChildrenCount()
 {
     return this->childrenCount;
 }
+
+void Node::freeNode(Node* node)
+{
+    free(node);
+}

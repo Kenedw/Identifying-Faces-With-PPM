@@ -61,6 +61,8 @@ public:
 
     unsigned int GetChildrenCount();
 
+    void freeNode(Node* node);
+
 };
 
 
