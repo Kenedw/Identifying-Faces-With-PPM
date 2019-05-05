@@ -28,6 +28,7 @@ PPMC::PPMC(unsigned int order_, std::string inputname, std::string outputname) :
     }
 
     arithmetic.SetFile(&output);
+    Log(inputname+"\nsizeOrigin:"+std::to_string(size));
 }
 
 void PPMC::Compress()
@@ -250,4 +251,12 @@ void PPMC::FreeTree(Node* node)
             FreeTree(node->GetSibiling());    
     }
     node->freeNode(node);
+}
+
+void PPMC::Log(std::string msg)
+{
+    std::ofstream loger;
+    loger.open("log.txt",std::ofstream::out | std::ofstream::app);
+    loger<<msg<<std::endl;
+    loger.close();
 }

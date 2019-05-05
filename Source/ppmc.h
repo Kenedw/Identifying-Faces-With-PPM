@@ -54,6 +54,8 @@ private:
 
     void FreeTree(Node* node);
 
+    void Log(std::string msg);
+
 public:
 
     PPMC(unsigned int order_, std::string inputname, std::string outputname);
