@@ -216,3 +216,36 @@ void PPMC::Progress()
 
     std::clog << progress_stream.str();
 }
+
+void PPMC::SaveNode(Node* node, std::fstream *file)
+{
+    file->write(/*CALMA CARAI*/);
+}
+
+void PPMC::SaveTree(Node* node,std::fstream *file)
+{
+    // switch (node->GetType()) {
+    //     case ROOT:
+    //     printf("root\n");
+    //     break;
+        
+    //     case ESC: 
+    //     printf("esc(%d)\n", node->GetCount());
+    //     break;
+        
+    //     default:
+    //     printf("%c(%d)\n", node->GetSymbol(), node->GetCount());
+    //     break;
+    // }
+    SaveNode(node,file);
+
+    if(node->GetChild() != nullptr) {
+        SaveTree(node->GetChild(),file);
+
+        if(node->GetEsc() != nullptr) 
+            SaveTree(node->GetEsc(),file);
+        
+        if(node->GetSibiling() != nullptr) 
+            SaveTree(node->GetSibiling(),file);    
+    }
+}

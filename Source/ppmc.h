@@ -49,6 +49,8 @@ private:
 
     int GetContextDepth(Node *node);
 
+    void SaveNode(Node* node, std::fstream *file);
+
 public:
 
     PPMC(unsigned int order_, std::string inputname, std::string outputname);
@@ -56,6 +58,8 @@ public:
     void Compress();
 
     void PrintTree(Node* node, int deep);
+
+    void SaveTree(Node* node, std::fstream *file);
     
 };
 
