@@ -28,25 +28,59 @@ PPMC::PPMC(unsigned int order_, std::string inputname, std::string outputname) :
     }
 
     arithmetic.SetFile(&output);
-    Log(inputname+"\nsizeOrigin:"+std::to_string(size));
+    CompressionRate = size;
+}
+
+void PPMC::SetInput(std::string inputname,std::string outputname)
+{
+    input.close();
+    input.open(inputname, std::ios::in | std::ios::binary);
+    if(!input) {
+        std::cout << "Q?Could not open input file" << std::endl;
+        exit(-1);
+    }
+    
+    input.seekg(0, std::ios::end);
+    long size = input.tellg(); //pego o tamanho da msg
+    input.seekg(0, std::ios::beg);
+
+    std::vector<unsigned char> v (size/sizeof(char)); //crio um vector com o tamanho da msg
+    input.read((char *) &v[0], size);  //populo o vector com a msg
+
+    this->data = new std::string(v.begin(), v.end());
+
+    output.close();
+    output.open(outputname, std::ios::out | std::ios::binary);
+    if(!output) {
+        std::cout << "Unable to open output file" << std::endl;
+        exit(0);
+    }
+
+    arithmetic.SetFile(&output);
+    Log('\n'+inputname+";sizeOrigin:;"+std::to_string(size)+";");
+    CompressionRate = size;
 }
 
 void PPMC::Compress()
 {
-    clock_t start = std::clock();
-
+    // progess = 0;
     for(auto &ch : *data) {
         Encode(ch);
-        InsertSymbol(ch);
-        Progress();
+        if(N_TRAINNER>0)
+            InsertSymbol(ch);
+        // Progress();
     }
-
+    N_TRAINNER-=1;
     arithmetic.EncodeFinish();
-    duration = (std::clock() - start) / (double) CLOCKS_PER_SEC;
-    std::cout << std::setprecision(3) << std::fixed;
-    std::clog << "\nCompression duration time: " << duration << " segundos" << std::endl;
-    // PrintTree(root,0);
-    FreeTree(root);
+
+    //----
+    output.seekg(0, std::ios::end);
+    long size = output.tellg(); //pego o tamanho da msg
+    output.seekg(0, std::ios::beg);
+
+    Log("sizeDestino:;"+std::to_string(size)+";");
+    // Log("Taxa de Compressão:"+std::to_string(size/CompressionRate)+";");
+    //----
 }
 
 void PPMC::Encode(unsigned char symbol_)
@@ -60,7 +94,7 @@ void PPMC::Encode(unsigned char symbol_)
         pActualNode = pVine->FindChild(symbol_);
 
         if(pActualNode == nullptr && pVine->GetChild() != nullptr) {
-            //std::cout << "esc: ";
+            // std::cout << "esc: "<<std::endl;
             GetInterval(pVine, pVine->GetEsc(), excluded);
 
             Node* pAux = pVine->GetChild();
@@ -72,7 +106,7 @@ void PPMC::Encode(unsigned char symbol_)
             pVine = pVine->GetVine();
         }
         else if(pActualNode != nullptr){
-            //std::cout << pActualNode->GetSymbol() << ": ";
+            // std::cout << pActualNode->GetSymbol() << ": "<<std::endl;
             GetInterval(pVine, pActualNode, excluded);
             return;
         } 
@@ -83,8 +117,9 @@ void PPMC::Encode(unsigned char symbol_)
 
     if(pVine == nullptr) {
         usedCh[symbol_] = true;
-        //std::cout << "Root: ";
+        // std::cout << "Root: "<<std::endl;
         GetInverval2(symbol_);
+        // std::cout << symbol_ <<std::endl;
         return;
     }
 
@@ -156,7 +191,9 @@ void PPMC::GetInverval2(unsigned char symbol_)
         }
     }
 
-    //printf("(%d,%d,%d)\n", sum, sum+1, numCh);
+    // printf("(%d,%d,%d)\n", sum, sum+1, numCh);
+    if(numCh==0)
+        numCh=1;
     arithmetic.Encode(sum, sum+1, numCh);
     numCh--;
 }
@@ -219,26 +256,15 @@ void PPMC::Progress()
     std::clog << progress_stream.str();
 }
 
-void PPMC::SaveNode(Node* node, std::fstream *file)
+void PPMC::FreeTree()
 {
-    // file->write(/*CALMA CARAI*/);
+    FreeTree(this->root);
 }
-
-void PPMC::SaveTree(Node* node,std::fstream *file)
-{
-    SaveNode(node,file);
-
-    if(node->GetChild() != nullptr) {
-        SaveTree(node->GetChild(),file);
-
-        if(node->GetEsc() != nullptr) 
-            SaveTree(node->GetEsc(),file);
-        
-        if(node->GetSibiling() != nullptr) 
-            SaveTree(node->GetSibiling(),file);    
-    }
-}
-
+/*
+* Desaloca cada nó da arvore de forma recursiva
+@param node é um ponteiro para a raiz
+da arvore a ser deletada
+*/
 void PPMC::FreeTree(Node* node)
 {
     if(node->GetChild() != nullptr) {
@@ -253,10 +279,15 @@ void PPMC::FreeTree(Node* node)
     node->freeNode(node);
 }
 
+/*
+* salva em arquivo as informações dos arquivos processados
+@param msg é a mensagem 
+que sera salva no log
+*/
 void PPMC::Log(std::string msg)
 {
     std::ofstream loger;
-    loger.open("log.txt",std::ofstream::out | std::ofstream::app);
-    loger<<msg<<std::endl;
+    loger.open("log.csv",std::ofstream::out | std::ofstream::app);
+    loger << msg;
     loger.close();
 }

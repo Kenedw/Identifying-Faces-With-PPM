@@ -63,6 +63,8 @@ public:
 
     void freeNode(Node* node);
 
+    void SaveNode(Node* node, std::fstream *file);
+
 };
 
 

@@ -22,7 +22,8 @@ private:
     
     bool usedCh[256] = {false};    
     int order = 0;
-    
+    int N_TRAINNER = 9; //numero de imagens para o treinamento
+
     std::vector<Node*> excluded;
     ArithmeticCoder arithmetic;
 
@@ -32,6 +33,7 @@ private:
     double step_progess = 0.0;
     double progess = 0.0;
     double duration = 0.0;
+    long   CompressionRate = 0;
 
     std::fstream input;
     std::fstream output;
@@ -50,8 +52,6 @@ private:
 
     int GetContextDepth(Node *node);
 
-    void SaveNode(Node* node, std::fstream *file);
-
     void FreeTree(Node* node);
 
     void Log(std::string msg);
@@ -64,8 +64,10 @@ public:
 
     void PrintTree(Node* node, int deep);
 
-    void SaveTree(Node* node, std::fstream *file);
-    
+    void SetInput(std::string inputname,std::string outputname);
+
+    void FreeTree();
+  
 };
 
 #endif //PPMC_PPMC_H_

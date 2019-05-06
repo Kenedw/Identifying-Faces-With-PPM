@@ -67,13 +67,7 @@ void ArithmeticCoder::Encode( const unsigned int low_count,
                               const unsigned int total       )
 {
 
-//    std::cout << "TOTAL = " << total << std::endl;
-//    std::cout << "LOW = " << low_count << std::endl;
-//    std::cout << "HIGH = " << high_count << std::endl;
-//    std::cout << std::endl;
-
     mStep = ( mHigh - mLow + 1 ) / total;
-
     mHigh = mLow + mStep * high_count - 1;
 
     mLow = mLow + mStep * low_count;
