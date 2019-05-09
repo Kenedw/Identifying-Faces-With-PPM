@@ -33,7 +33,6 @@ private:
     double step_progess = 0.0;
     double progess = 0.0;
     double duration = 0.0;
-    long   CompressionRate = 0;
 
     std::fstream input;
     std::fstream output;

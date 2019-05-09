@@ -20,7 +20,6 @@ PPMC::PPMC(unsigned int order_, std::string inputname, std::string outputname) :
 
     this->data = new std::string(v.begin(), v.end());
     step_progess = 1.0 / this->data->size();
-
     output.open(outputname, std::ios::out | std::ios::binary);
     if(!output) {
         std::cout << "Unable to open output file" << std::endl;
@@ -28,7 +27,6 @@ PPMC::PPMC(unsigned int order_, std::string inputname, std::string outputname) :
     }
 
     arithmetic.SetFile(&output);
-    CompressionRate = size;
 }
 
 void PPMC::SetInput(std::string inputname,std::string outputname)
@@ -57,8 +55,8 @@ void PPMC::SetInput(std::string inputname,std::string outputname)
     }
 
     arithmetic.SetFile(&output);
-    Log('\n'+inputname+";sizeOrigin:;"+std::to_string(size)+";");
-    CompressionRate = size;
+    // if(N_TRAINNER<=0)
+        Log('\n'+inputname+";"+std::to_string(size)+";");
 }
 
 void PPMC::Compress()
@@ -72,14 +70,16 @@ void PPMC::Compress()
     }
     N_TRAINNER-=1;
     arithmetic.EncodeFinish();
-
+    
+    
+    //PrintTree(root);
+    
     //----
     output.seekg(0, std::ios::end);
     long size = output.tellg(); //pego o tamanho da msg
     output.seekg(0, std::ios::beg);
-
-    Log("sizeDestino:;"+std::to_string(size)+";");
-    // Log("Taxa de Compressão:"+std::to_string(size/CompressionRate)+";");
+    // if(N_TRAINNER<=0)
+        Log(std::to_string(size)+";");
     //----
 }
 
@@ -212,20 +212,21 @@ int PPMC::GetContextDepth(Node *node)
 
 void PPMC::PrintTree(Node* node, int deep)
 {
-    for(auto i = 0; i < deep; ++i)
-        std::cout << "-\t";
+    // for(auto i = 0; i < deep; ++i)
+    //     std::cout << "-\t";
+    std::cout << "(";
     
     switch (node->GetType()) {
         case ROOT:
-        printf("root\n");
+        printf("root");
         break;
         
         case ESC: 
-        printf("esc(%d)\n", node->GetCount());
+        printf("esc(%d)", node->GetCount());
         break;
         
         default:
-        printf("%c(%d)\n", node->GetSymbol(), node->GetCount());
+        printf("%c(%d)", node->GetSymbol(), node->GetCount());
         break;
     }
     
@@ -240,6 +241,7 @@ void PPMC::PrintTree(Node* node, int deep)
             PrintTree(node->GetSibiling(), --deep);
         }
     }    
+    std::cout << "(";
 }
 
 void PPMC::Progress()
