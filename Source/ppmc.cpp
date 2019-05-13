@@ -177,8 +177,10 @@ void PPMC::GetInterval(Node *pDad, Node *pChild, bool *arr)
         pAuxNode = pAuxNode->GetSibiling();
     }
 
-    //printf("(%d,%d,%d)\n", sum, sum+pChild->GetCount(), pDad->GetChildrenCount()-sum2);
-    arithmetic.Encode(sum, sum+pChild->GetCount(), pDad->GetChildrenCount()-sum2);
+    if(pDad->GetChildrenCount()-sum2 == 0)
+        arithmetic.Encode(sum, sum+pChild->GetCount(), 1);
+    else
+        arithmetic.Encode(sum, sum+pChild->GetCount(), pDad->GetChildrenCount()-sum2);
 }
 
 void PPMC::GetInverval2(unsigned char symbol_)

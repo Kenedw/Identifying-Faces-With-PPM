@@ -30,7 +30,7 @@ makefile
 And next:
 
 ```
-./Build/PPMC [context_limit] [input_filename]
+./Build/PPMC [context_limit] [input_directoryname]
 ```
 
 ## Built With
